@@ -242,7 +242,7 @@ const TaskSection = ({ section, sectionTitle, color }) => {
             >
               <textarea
                 placeholder="Add new task..."
-                className="w-full rounded border border-primary text-black bg-primary/20 p-3 text-sm placeholder-primary focus:outline-0"
+                className="w-full rounded border border-[#A78BFA] text-white bg-gray-700 p-3 text-base placeholder-primary focus:outline-0"
                 value={taskText}
                 onChange={(e) => setTaskText(e.target.value)}
                 spellCheck="false"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,6 +16,7 @@ const TaskSection = ({ section, sectionTitle, color }) => {
   const [dropdownTaskId, setDropdownTaskId] = useState(null);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTaskText, setEditTaskText] = useState("");
+  const dropdownRef = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -85,6 +86,20 @@ const TaskSection = ({ section, sectionTitle, color }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownTaskId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="w-full shrink grow">
@@ -168,7 +183,10 @@ const TaskSection = ({ section, sectionTitle, color }) => {
                   />
                 </div>
                 {dropdownTaskId === task.id && (
-                  <div className="absolute cursor-pointer top-9 right-0 mt-1 w-32 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10">
+                  <div
+                    ref={dropdownRef}
+                    className="absolute cursor-pointer top-9 right-0 mt-1 w-32 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10"
+                  >
                     <button
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                       onClick={() => {

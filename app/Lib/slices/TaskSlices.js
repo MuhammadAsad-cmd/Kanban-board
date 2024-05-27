@@ -3,6 +3,8 @@ const { createSlice } = require("@reduxjs/toolkit");
 const initialState = {
   projects: [],
   selectedProjectId: null,
+  selectedSection: null, // Add this line
+  sectionHeight: 0, // Add this line
 };
 
 const projectsSlice = createSlice({
@@ -21,6 +23,10 @@ const projectsSlice = createSlice({
     },
     selectProject: (state, action) => {
       state.selectedProjectId = action.payload;
+    },
+    selectSection: (state, action) => {
+      state.selectedSection = action.payload;
+      state.sectionHeight = 600;
     },
     addTask: (state, action) => {
       const { projectId, section, task } = action.payload;
@@ -53,6 +59,22 @@ const projectsSlice = createSlice({
         state.selectedProjectId = null;
       }
     },
+    editProject: (state, action) => {
+      const { projectId, newName } = action.payload;
+      const project = state.projects.find((p) => p.id === projectId);
+      if (project) {
+        project.name = newName;
+      }
+    },
+    reorderProjects: (state, action) => {
+      const { sourceIndex, destinationIndex } = action.payload;
+      const [movedProject] = state.projects.splice(sourceIndex, 1);
+      state.projects.splice(destinationIndex, 0, movedProject);
+    },
+    resetSection: (state) => {
+      state.selectedSection = null;
+      state.sectionHeight = 0;
+    },
   },
 });
 
@@ -64,5 +86,8 @@ export const {
   deleteTask,
   editTask,
   deleteProject,
+  editProject,
+  reorderProjects,
+  selectSection
 } = projectsSlice.actions;
 export const ProjectReducer = projectsSlice.reducer;

@@ -89,7 +89,7 @@ const SideNav = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 h-full w-[250px] bg-white dark:bg-neutral-800">
+      <div className="fixed top-0 left-0 h-full w-[250px] bg-[#333739] text-white">
         <div className="flex flex-col h-full">
           <div className="p-4 pb-2 flex items-center justify-between">
             <h3 className="uppercase font-medium text-primary">Projects</h3>
@@ -161,7 +161,7 @@ const SideNav = () => {
                         </div>
                       </form>
                     ) : (
-                      <div className="flex items-center w-full justify-between p-3 h-[46px] cursor-pointer rounded border border-[#404040] gap-1.5 py-1.5 text-sm transition-colors text-white hover:text-neutral-800 dark:hover:text-neutral-50">
+                      <div className="flex items-center w-full justify-between p-3 h-[46px] cursor-pointer rounded border border-[#404040] shadow-2xl gap-1.5 py-1.5 text-sm transition-colors text-white">
                         {project.name}
                         <HiDotsVertical
                           className={`text-base text-white duration-300 ease-in-out ${
@@ -212,7 +212,7 @@ const SideNav = () => {
               {!showForm ? (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="flex w-full justify-end items-center gap-1.5 py-1.5 text-xs transition-colors text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-50"
+                  className="flex w-full justify-end items-center gap-1.5 py-1.5 text-xs transition-colors text-neutral-50"
                 >
                   <span>Add project</span>
                   <svg

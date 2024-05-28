@@ -10,7 +10,7 @@ import {
 } from "@/app/Lib/slices/TaskSlices";
 import { v4 as uuidv4 } from "uuid";
 
-const TaskSection = ({ section, sectionTitle, color }) => {
+const TaskSection = ({ section, sectionTitle, color, line }) => {
   const [taskText, setTaskText] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [dropdownTaskId, setDropdownTaskId] = useState(null);
@@ -102,51 +102,172 @@ const TaskSection = ({ section, sectionTitle, color }) => {
   }, []);
 
   return (
-    <div className="w-full shrink grow">
-      <div className={`flex items-center justify-between select-none ${color}`}>
-        <h3 className={`uppercase font-medium ${color}`}>{sectionTitle}</h3>
-        <span className="rounded text-sm text-neutral-400">{tasks.length}</span>
-      </div>
-      <div
-        className="area_height w-full transition-colors bg-white/0 dark:bg-neutral-800/0"
-        onDrop={(e) => handleDrop(e, section)}
-        onDragOver={handleDragOver}
-      >
-        {tasks.map((task, index) => (
-          <div
-            key={task.id}
-            draggable
-            onDragStart={(e) => handleDragStart(e, section, index)}
-            className="relative"
-          >
-            {editTaskId === task.id ? (
+    <>
+      <div className="w-full shrink grow">
+        <p className={`${line} h-1 w-full mb-3`}></p>
+        <div
+          className={`flex items-center justify-between select-none ${color}`}
+        >
+          <h3 className={`uppercase font-medium ${color}`}>{sectionTitle}</h3>
+          <span className="rounded text-sm text-neutral-400">
+            {tasks.length}
+          </span>
+        </div>
+        <div
+          className="area_height w-full transition-colors"
+          onDrop={(e) => handleDrop(e, section)}
+          onDragOver={handleDragOver}
+        >
+          {tasks.map((task, index) => (
+            <div
+              key={task.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, section, index)}
+              className="relative"
+            >
+              {editTaskId === task.id ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleEditTask(task.id);
+                  }}
+                  className="flex w-full ShadowTask flex-col gap-5 pb-3 pr-3  mt-2 rounded border border-primary"
+                >
+                  <textarea
+                    placeholder="Edit task..."
+                    className="flex-1 text-neutral-700 min-h-20 rounded bg-white p-3 text-sm outline-none"
+                    value={editTaskText}
+                    onChange={(e) => setEditTaskText(e.target.value)}
+                    spellCheck="false"
+                  ></textarea>
+                  <div className="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setEditTaskId(null)}
+                      className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex items-center gap-1.5 rounded bg-neutral-400 hover:bg-neutral-500 px-1 py-1.5 text-xs text-white"
+                    >
+                      <span>Update</span>
+                      <svg
+                        stroke="currentColor"
+                        fill="none"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        height="1em"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="flex w-full group cursor-pointer justify-start mt-2 p-3 h-[46px] ShadowTask rounded border border-[#eeee] items-center gap-1.5 py-1.5 text-base transition-colors bg-[#FFFFFF] text-neutral-800">
+                    <p className="flex w-full justify-start">{task.name}</p>
+                    <div className="w-5 h-5">
+                      <HiDotsVertical
+                        className={`text-base text-neutral-500 duration-300 ease-in-out ${
+                          dropdownTaskId === task.id
+                            ? "opacity-100"
+                            : "opacity-0 group-hover:opacity-100"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDropdownTaskId((prevId) =>
+                            prevId === task.id ? null : task.id
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                  {dropdownTaskId === task.id && (
+                    <div
+                      ref={dropdownRef}
+                      className="absolute cursor-pointer top-9 dropdownShadow right-0 mt-1 w-32 bg-white border border-gray-200 rounded shadow-lg z-10"
+                    >
+                      <button
+                        className="w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100"
+                        onClick={() => {
+                          setEditTaskText(task.name);
+                          setEditTaskId(task.id);
+                          setDropdownTaskId(null);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100"
+                        onClick={() => handleDeleteTask(task.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+
+          <div className="w-full transition-colors m-auto bg-neutral-800/0">
+            {!showForm ? (
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex w-full justify-end items-center gap-1.5 py-1.5 text-xs transition-colors text-neutral-500 hover:text-neutral-800"
+              >
+                <span>Add Card</span>
+                <svg
+                  stroke="currentColor"
+                  fill="none"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  height="1em"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            ) : (
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleEditTask(task.id);
+                  handleAddTask();
                 }}
-                className="flex w-full flex-col gap-5 pb-3 pr-3 bg-[#3f3a50] mt-2 rounded border border-primary"
+                className="w-full mt-2"
               >
                 <textarea
-                  placeholder="Edit task..."
-                  className="flex-1 text-white min-h-20 rounded bg-[#3f3a50] p-3 text-sm outline-none"
-                  value={editTaskText}
-                  onChange={(e) => setEditTaskText(e.target.value)}
+                  placeholder="Add new task..."
+                  className="w-full rounded  text-black bg-white ShadowTask p-3 text-base placeholder-neutral-400 outline-none"
+                  value={taskText}
+                  onChange={(e) => setTaskText(e.target.value)}
                   spellCheck="false"
                 ></textarea>
-                <div className="flex items-center justify-end gap-1.5">
+                <div className="mt-1.5 flex items-center justify-end gap-1.5">
                   <button
                     type="button"
-                    onClick={() => setEditTaskId(null)}
-                    className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors dark:hover:text-neutral-50"
+                    onClick={() => setShowForm(false)}
+                    className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors "
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 rounded bg-neutral-600 hover:bg-neutral-800 dark:bg-neutral-50 px-3 py-1.5 text-xs text-neutral-50 dark:text-neutral-950 transition-colors dark:hover:bg-neutral-300"
+                    className="flex items-center gap-1.5 rounded hover:bg-neutral-600 bg-neutral-400 px-3 py-1.5 text-xs text-white transition-colors"
                   >
-                    <span>Update</span>
+                    <span>Add</span>
                     <svg
                       stroke="currentColor"
                       fill="none"
@@ -164,123 +285,11 @@ const TaskSection = ({ section, sectionTitle, color }) => {
                   </button>
                 </div>
               </form>
-            ) : (
-              <>
-                <div className="flex w-full group cursor-pointer justify-start mt-2 p-3 h-[46px] rounded border border-[#404040] items-center gap-1.5 py-1.5 text-xs transition-colors bg-[#262626] text-white hover:text-neutral-800 dark:hover:text-neutral-50">
-                  <p className="flex w-full justify-start">{task.name}</p>
-                  <HiDotsVertical
-                    className={`text-base text-white duration-300 ease-in-out ${
-                      dropdownTaskId === task.id
-                        ? "opacity-100"
-                        : "opacity-0 group-hover:opacity-100"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDropdownTaskId((prevId) =>
-                        prevId === task.id ? null : task.id
-                      );
-                    }}
-                  />
-                </div>
-                {dropdownTaskId === task.id && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute cursor-pointer top-9 right-0 mt-1 w-32 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10"
-                  >
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      onClick={() => {
-                        setEditTaskText(task.name);
-                        setEditTaskId(task.id);
-                        setDropdownTaskId(null);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </>
             )}
           </div>
-        ))}
-
-        <div className="w-full transition-colors m-auto bg-neutral-800/0">
-          {!showForm ? (
-            <button
-              onClick={() => setShowForm(true)}
-              className="flex w-full justify-end items-center gap-1.5 py-1.5 text-xs transition-colors text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-50"
-            >
-              <span>Add Card</span>
-              <svg
-                stroke="currentColor"
-                fill="none"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                height="1em"
-                width="1em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAddTask();
-              }}
-              className="w-full mt-2"
-            >
-              <textarea
-                placeholder="Add new task..."
-                className="w-full rounded border border-[#A78BFA] text-white bg-gray-700 p-3 text-base placeholder-primary focus:outline-0"
-                value={taskText}
-                onChange={(e) => setTaskText(e.target.value)}
-                spellCheck="false"
-              ></textarea>
-              <div className="mt-1.5 flex items-center justify-end gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors dark:hover:text-neutral-50"
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  className="flex items-center gap-1.5 rounded bg-neutral-600 hover:bg-neutral-800 dark:bg-neutral-50 px-3 py-1.5 text-xs text-neutral-50 dark:text-neutral-950 transition-colors dark:hover:bg-neutral-300"
-                >
-                  <span>Add</span>
-                  <svg
-                    stroke="currentColor"
-                    fill="none"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                </button>
-              </div>
-            </form>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

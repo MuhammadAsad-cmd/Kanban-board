@@ -25,7 +25,7 @@ export const metadata = {
       "Organize tasks visually with Project Kanban, a dynamic task management tool.",
     images: [
       {
-        url: "/images/kanban-board.webp",
+        url: "/images/kanban.png",
         width: 1200,
         height: 630,
         alt: "Project Kanban Task Management Board",
@@ -45,7 +45,7 @@ export const metadata = {
       "Visual task management with Project Kanban for efficient tracking and organization.",
     site: "@projectkanban",
     creator: "@projectkanban",
-    images: ["/images/kanban-board.webp"],
+    images: ["/images/kanban.png"],
   },
 
   // Robots meta tag (instructs search engine crawlers)

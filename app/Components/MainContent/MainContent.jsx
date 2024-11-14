@@ -18,14 +18,14 @@ const MainContent = () => {
 
   return (
     <>
-      <section className="ml-[260px]">
+      <section className="md:ml-[260px]">
         <div className="px-4 mt-4">
           <h2 className="text-xl font-medium text-[#767777]">
             Action Board (status)
           </h2>
         </div>
 
-        <div className="flex h-full min-h-[95vh] w-full gap-5 px-4 py-5">
+        <div className="flex md:flex-row flex-col h-full min-h-[95vh] w-full gap-5 px-4 py-5">
           <TaskSection
             section="backlog"
             sectionTitle="Backlog"

@@ -16,7 +16,9 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
   const [dropdownTaskId, setDropdownTaskId] = useState(null);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTaskText, setEditTaskText] = useState("");
+  const [isOver, setIsOver] = useState(false); // To track if the section is being hovered over
   const dropdownRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -81,10 +83,23 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
         taskIndex: parseInt(index, 10),
       })
     );
+    setIsOver(false); // Reset highlight after drop
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    setIsOver(true); // Set the highlight when dragging over the section
+  };
+
+  const handleDragLeave = () => {
+    setIsOver(false); // Reset highlight when dragging leaves the section
+  };
+
+  const calculateDynamicHeight = () => {
+    if (sectionRef.current) {
+      return sectionRef.current.offsetHeight; // Get the current height of the section
+    }
+    return 0;
   };
 
   useEffect(() => {
@@ -114,9 +129,17 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
           </span>
         </div>
         <div
-          className="area_height w-full transition-colors"
+          ref={sectionRef}
+          className={`area_height w-full transition-colors ${
+            isOver ? "bg-gray-200" : "" // Highlight the section when dragging over
+          }`}
           onDrop={(e) => handleDrop(e, section)}
           onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave} // Reset the highlight when the drag leaves
+          style={{
+            height: isOver ? `${calculateDynamicHeight() + 50}px` : "100%",
+            border: isOver ? "2px dashed #333739" : "", // Change border color on hover
+          }}
         >
           {tasks.map((task, index) => (
             <div
@@ -241,31 +264,26 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
                 </svg>
               </button>
             ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleAddTask();
-                }}
-                className="w-full mt-2"
-              >
+              <div className="flex w-full ShadowTask flex-col gap-5 pb-3 pr-3 mt-2 rounded border border-primary">
                 <textarea
-                  placeholder="Add new task..."
-                  className="w-full rounded  text-black bg-white ShadowTask p-3 text-base placeholder-neutral-400 outline-none"
+                  placeholder="Add a task..."
+                  className="flex-1 text-neutral-700 min-h-20 rounded bg-white p-3 text-sm outline-none"
                   value={taskText}
                   onChange={(e) => setTaskText(e.target.value)}
                   spellCheck="false"
                 ></textarea>
-                <div className="mt-1.5 flex items-center justify-end gap-1.5">
+                <div className="flex items-center justify-end gap-1.5">
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors "
+                    className="px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-800 transition-colors"
                   >
-                    Close
+                    Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 rounded hover:bg-neutral-600 bg-neutral-400 px-3 py-1.5 text-xs text-white transition-colors"
+                    onClick={handleAddTask}
+                    className="flex items-center gap-1.5 rounded bg-neutral-400 hover:bg-neutral-500 px-1 py-1.5 text-xs text-white"
                   >
                     <span>Add</span>
                     <svg
@@ -284,7 +302,7 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
                     </svg>
                   </button>
                 </div>
-              </form>
+              </div>
             )}
           </div>
         </div>

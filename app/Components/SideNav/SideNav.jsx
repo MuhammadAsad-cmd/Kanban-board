@@ -9,7 +9,8 @@ import {
 } from "@/app/Lib/slices/TaskSlices";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { HiDotsVertical } from "react-icons/hi";
+import { HiDotsVertical, HiOutlineDotsVertical } from "react-icons/hi";
+import { RiArrowLeftLine, RiMenu3Line } from "react-icons/ri";
 
 const SideNav = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,12 @@ const SideNav = () => {
   const [dropdownProjectId, setDropdownProjectId] = useState(null);
   const [editProjectId, setEditProjectId] = useState(null);
   const [editProjectName, setEditProjectName] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
 
   const handleAddProjects = (e) => {
     e.preventDefault();
@@ -89,7 +95,12 @@ const SideNav = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 h-full w-[250px] bg-[#333739] text-white">
+      <div
+        ref={dropdownRef}
+        className={`fixed z-50 top-0 left-0 h-full w-[250px] bg-[#333739] text-white transition-transform duration-300 ease-in-out transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0`}
+      >
         <div className="flex flex-col h-full">
           <div className="p-4 pb-2 flex items-center justify-between">
             <h3 className="uppercase font-medium text-primary">Projects</h3>
@@ -274,6 +285,21 @@ const SideNav = () => {
           </div>
         </div>
       </div>
+      <button
+        className={`z-50 hidden  absolute transition-transform duration-500 ease-in-out transform top-4 max-md:block p-2 text-white bg-[#333739] rounded-r-full ${
+          isSidebarOpen ? "left-[250px] opacity-100" : "left-0 opacity-100"
+        }`}
+        onClick={toggleSidebar}
+      >
+        {isSidebarOpen ? <RiArrowLeftLine /> : <RiMenu3Line />}
+      </button>
+
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black opacity-50 max-w-md:block md:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
     </>
   );
 };

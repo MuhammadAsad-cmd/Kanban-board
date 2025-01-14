@@ -3,8 +3,8 @@ const { createSlice } = require("@reduxjs/toolkit");
 const initialState = {
   projects: [],
   selectedProjectId: null,
-  selectedSection: null, // Add this line
-  sectionHeight: 0, // Add this line
+  selectedSection: null, 
+  sectionHeight: 0, 
 };
 
 const projectsSlice = createSlice({

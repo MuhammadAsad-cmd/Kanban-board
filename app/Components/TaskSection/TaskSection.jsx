@@ -17,6 +17,7 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTaskText, setEditTaskText] = useState("");
   const [isOver, setIsOver] = useState(false); // To track if the section is being hovered over
+  const [expandedTaskId, setExpandedTaskId] = useState(null);
   const dropdownRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -131,13 +132,13 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
         <div
           ref={sectionRef}
           className={`area_height w-full transition-colors ${
-            isOver ? "bg-gray-200" : "" // Highlight the section when dragging over
+            isOver ? "bg-gray-50" : "" // Highlight the section when dragging over
           }`}
           onDrop={(e) => handleDrop(e, section)}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave} // Reset the highlight when the drag leaves
           style={{
-            height: isOver ? `${calculateDynamicHeight() + 50}px` : "100%",
+            height: isOver ? `${calculateDynamicHeight() + 50}px` : "90%",
             border: isOver ? "2px dashed #333739" : "", // Change border color on hover
           }}
         >
@@ -195,8 +196,10 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
                 </form>
               ) : (
                 <>
-                  <div className="flex w-full group cursor-pointer justify-start mt-2 p-3 h-[46px] ShadowTask rounded border border-[#eeee] items-center gap-1.5 py-1.5 text-base transition-colors bg-[#FFFFFF] text-neutral-800">
-                    <p className="flex w-full justify-start">{task.name}</p>
+                  <div className="flex w-full  group cursor-pointer justify-between min-h-12 mt-2 p-3  ShadowTask rounded border border-[#eeee] items-center gap-1.5 py-1.5 text-base transition-colors bg-[#FFFFFF] text-neutral-800">
+                    <div>
+                      <p className="flex w-full justify-start">{task.name}</p>
+                    </div>
                     <div className="w-5 h-5">
                       <HiDotsVertical
                         className={`text-base text-neutral-500 duration-300 ease-in-out ${
@@ -213,6 +216,7 @@ const TaskSection = ({ section, sectionTitle, color, line }) => {
                       />
                     </div>
                   </div>
+
                   {dropdownTaskId === task.id && (
                     <div
                       ref={dropdownRef}
